@@ -6,6 +6,13 @@ from werkzeug.exceptions import HTTPException
 app = Flask(__name__)
 
 """
+Function to allow customizing error description.
+"""
+def json_http_response(code, message):
+    return jsonify(message=message, errorCode=code), code
+
+# http://flask.pocoo.org/snippets/83/
+"""
 Creates a JSON-oriented Flask app.
 
 All error responses that you don't specifically
@@ -16,12 +23,8 @@ type, and will contain JSON like this (just an example):
 """
 def make_json_error(ex):
     error_code = ex.code if isinstance(ex, HTTPException) else 500
-    response = jsonify(message=str(ex), status=error_code)
-    response.status_code = error_code
-    return response
+    return json_http_response(error_code, str(ex))
 
-
-# http://flask.pocoo.org/snippets/83/
 for code in default_exceptions.iterkeys():
     app.errorhandler(code)(make_json_error)
 
