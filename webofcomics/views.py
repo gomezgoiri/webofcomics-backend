@@ -58,7 +58,9 @@ def get_strip(strip_id):
         header_etag = request.headers.get('If-None-Match')
         if header_etag:
             if header_etag == '*' or header_etag == strip['etag']:
-                return json_http_response('Not modified', 304)
+                resp, _ = json_http_response('Not modified', 304)
+                resp.headers['ETag'] = strip['etag']
+                return (resp, 304)
 
         if strip:
             strip, etag = from_db(strip)
