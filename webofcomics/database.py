@@ -1,3 +1,8 @@
+"""
+Created on 05/03/2017
+@author: Aitor Gomez Goiri <aitor@gomezgoiri.net>
+"""
+
 from pymongo import MongoClient
 
 client = MongoClient()

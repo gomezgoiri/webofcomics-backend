@@ -12,6 +12,10 @@ To run it easily and quickly just use [Docker](https://www.docker.com/):
 
 And from that point on just use the _wocmongo_ container which will be listening on _localhost:27017_.
 
+## Configuration
+
+Copy _config.ini.copy_ to __config.ini__ editing the necessary values.
+
 ## Running on development mode
 
     ./run.sh

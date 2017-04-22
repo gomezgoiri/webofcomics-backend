@@ -1,4 +1,11 @@
+"""
+Created on 05/03/2017
+@author: Aitor Gomez Goiri <aitor@gomezgoiri.net>
+"""
+
 from flask import request, abort, url_for, jsonify, make_response
+from flask_jwt import jwt_required, current_identity
+
 from bson.objectid import ObjectId
 from bson.errors import InvalidId
 
@@ -15,6 +22,11 @@ from webofcomics.database import strips
 @app.route('/')
 def index():
     return 'Hello World!'
+
+@app.route('/user')
+@jwt_required()
+def get_username():
+    return jsonify('%s' % current_identity)
 
 @app.route('/comics')
 def list_comics():
@@ -44,6 +56,7 @@ def list_strips():
     return jsonify([from_db_without_etag(s) for s in strips.find()])
 
 @app.route('/strips', methods=['POST'])
+@jwt_required()
 def insert_strip():
     return get_strip_url(strips.insert_one(request.json).inserted_id)
 
@@ -77,6 +90,7 @@ def get_strip(strip_id):
         abort(404)
 
 @app.route('/strips/<strip_id>', methods=['DELETE'])
+@jwt_required()
 def delete_strip(strip_id):
     try:
         header_etag = request.headers.get('If-None-Match')
@@ -101,6 +115,7 @@ def delete_strip(strip_id):
         abort(404)
 
 @app.route('/strips/<strip_id>', methods=['PUT'])
+@jwt_required()
 def update_strip(strip_id):
     try:
         strip, etag = from_db(strips.find_one({'_id': ObjectId(strip_id)}))
